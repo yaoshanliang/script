@@ -1,10 +1,11 @@
+#主机名
+host=127.0.0.1
 #用户名
 username=root
 #密码
 password=nicai
 #将要备份的数据库
-database_name=l_love_you
-
+databases=(database1 database2)
 #保存备份文件最多个数
 count=100
 #备份保存路径
@@ -17,8 +18,11 @@ if [ ! -d $backup_path ];
 then     
     mkdir -p $backup_path; 
 fi
+
+for database_name in ${databases[@]}
+do
 #开始备份
-mysqldump -u $username -p$password $database_name > $backup_path/$database_name-$date_time.sql
+mysqldump -h $host -u $username -p$password $database_name > $backup_path/$database_name-$date_time.sql
 #开始压缩
 cd $backup_path
 tar -zcvf $database_name-$date_time.tar.gz $database_name-$date_time.sql
@@ -40,3 +44,6 @@ then
   #更新删除文件日志
   echo "delete $delfile" >> $backup_path/dump.log
 fi
+done
+
+
